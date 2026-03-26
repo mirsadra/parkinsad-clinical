@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Clinical Portfolio — Launching…</title>
+    <script src="https://cdn.jsdelivr.net/npm/fhirclient/build/fhir-client.js"></script>
+    <style>
+      body {
+        background: #0f1117;
+        color: #f1f3f7;
+        font-family: "DM Sans", sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .spinner {
+        width: 32px;
+        height: 32px;
+        border: 2px solid #2a3044;
+        border-top-color: #3b82f6;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      p { color: #9ca3af; font-size: 14px; margin: 0; }
+    </style>
+  </head>
+  <body>
+    <div class="spinner"></div>
+    <p>Connecting to clinical records…</p>
+    <script>
+      FHIR.oauth2.authorize({
+        client_id: "378c65fa-ca11-452b-96d9-f833a75531d1",
+        scope: [
+          "launch",
+          "openid",
+          "fhirUser",
+          "patient/Patient.read",
+          "patient/AllergyIntolerance.read",
+          "patient/MedicationRequest.read",
+          "patient/MedicationAdministration.read",
+          "patient/MedicationDispense.read",
+          "patient/Condition.read",
+          "patient/Observation.read",
+          "patient/DiagnosticReport.read",
+          "patient/Encounter.read",
+          "patient/Immunization.read",
+          "patient/Procedure.read",
+          "patient/DocumentReference.read",
+          "patient/ServiceRequest.read",
+          "patient/Practitioner.read",
+          "patient/Organization.read",
+          "patient/Location.read",
+          "patient/FamilyMemberHistory.read"
+        ].join(" "),
+        completeInTarget: true
+      });
+    </script>
+  </body>
+</html>

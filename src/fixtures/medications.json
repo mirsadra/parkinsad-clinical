@@ -1,0 +1,73 @@
+[
+  {
+    "resourceType": "MedicationRequest",
+    "id": "m1",
+    "status": "active",
+    "medicationCodeableConcept": {
+      "coding": [{ "system": "http://snomed.info/sct", "code": "322280009", "display": "Aspirin 75mg dispersible tablet" }],
+      "text": "Aspirin 75mg dispersible tablet"
+    },
+    "dosageInstruction": [{ "text": "75mg once daily — with or after food", "route": { "text": "Oral" }, "timing": { "code": { "text": "Once daily" } } }],
+    "authoredOn": "2024-01-15",
+    "reasonCode": [{ "coding": [{ "system": "http://snomed.info/sct", "display": "Atrial fibrillation" }] }]
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "m2",
+    "status": "active",
+    "medicationCodeableConcept": {
+      "coding": [{ "system": "http://snomed.info/sct", "display": "Bisoprolol 5mg tablet" }],
+      "text": "Bisoprolol 5mg tablet"
+    },
+    "dosageInstruction": [{ "text": "5mg once daily — morning", "route": { "text": "Oral" }, "timing": { "code": { "text": "Once daily" } } }],
+    "authoredOn": "2024-02-20",
+    "reasonCode": [{ "coding": [{ "system": "http://snomed.info/sct", "display": "Heart failure" }] }]
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "m3",
+    "status": "active",
+    "medicationCodeableConcept": {
+      "coding": [{ "system": "http://snomed.info/sct", "display": "Furosemide 40mg tablet" }],
+      "text": "Furosemide 40mg tablet"
+    },
+    "dosageInstruction": [{ "text": "40mg once daily — morning", "route": { "text": "Oral" }, "timing": { "code": { "text": "Once daily" } } }],
+    "authoredOn": "2024-02-20",
+    "reasonCode": [{ "coding": [{ "system": "http://snomed.info/sct", "display": "Heart failure with reduced ejection fraction" }] }]
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "m4",
+    "status": "active",
+    "medicationCodeableConcept": {
+      "coding": [{ "system": "http://snomed.info/sct", "display": "Apixaban 5mg tablet" }],
+      "text": "Apixaban 5mg tablet"
+    },
+    "dosageInstruction": [{ "text": "5mg twice daily", "route": { "text": "Oral" }, "timing": { "code": { "text": "Twice daily" } } }],
+    "authoredOn": "2023-11-08",
+    "reasonCode": [{ "coding": [{ "system": "http://snomed.info/sct", "display": "Atrial fibrillation" }] }]
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "m5",
+    "status": "active",
+    "medicationCodeableConcept": {
+      "coding": [{ "system": "http://snomed.info/sct", "display": "Atorvastatin 40mg tablet" }],
+      "text": "Atorvastatin 40mg tablet"
+    },
+    "dosageInstruction": [{ "text": "40mg once at night", "route": { "text": "Oral" }, "timing": { "code": { "text": "Once daily — night" } } }],
+    "authoredOn": "2023-06-01"
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "m6",
+    "status": "active",
+    "medicationCodeableConcept": {
+      "coding": [{ "system": "http://snomed.info/sct", "display": "Ramipril 5mg capsule" }],
+      "text": "Ramipril 5mg capsule"
+    },
+    "dosageInstruction": [{ "text": "5mg once daily", "route": { "text": "Oral" }, "timing": { "code": { "text": "Once daily" } } }],
+    "authoredOn": "2022-09-14",
+    "reasonCode": [{ "coding": [{ "system": "http://snomed.info/sct", "display": "Heart failure" }] }]
+  }
+]

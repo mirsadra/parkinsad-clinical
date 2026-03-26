@@ -1,0 +1,86 @@
+[
+  {
+    "resourceType": "Observation", "id": "l1", "status": "final",
+    "category": [{ "coding": [{ "code": "laboratory" }] }],
+    "code": { "coding": [{ "system": "http://loinc.org", "code": "718-7", "display": "Hemoglobin [Mass/volume] in Blood" }], "text": "Haemoglobin" },
+    "valueQuantity": { "value": 118, "unit": "g/L" },
+    "referenceRange": [{ "low": { "value": 130 }, "high": { "value": 170 }, "text": "130-170 g/L" }],
+    "interpretation": [{ "coding": [{ "code": "L", "display": "Low" }] }],
+    "effectiveDateTime": "2026-03-20T08:00:00Z"
+  },
+  {
+    "resourceType": "Observation", "id": "l2", "status": "final",
+    "category": [{ "coding": [{ "code": "laboratory" }] }],
+    "code": { "coding": [{ "system": "http://loinc.org", "code": "2951-2", "display": "Sodium [Moles/volume] in Serum or Plasma" }], "text": "Sodium" },
+    "valueQuantity": { "value": 138, "unit": "mmol/L" },
+    "referenceRange": [{ "low": { "value": 133 }, "high": { "value": 146 }, "text": "133-146 mmol/L" }],
+    "effectiveDateTime": "2026-03-20T08:00:00Z"
+  },
+  {
+    "resourceType": "Observation", "id": "l3", "status": "final",
+    "category": [{ "coding": [{ "code": "laboratory" }] }],
+    "code": { "coding": [{ "system": "http://loinc.org", "code": "2823-3", "display": "Potassium [Moles/volume] in Serum or Plasma" }], "text": "Potassium" },
+    "valueQuantity": { "value": 4.2, "unit": "mmol/L" },
+    "referenceRange": [{ "low": { "value": 3.5 }, "high": { "value": 5.1 }, "text": "3.5-5.1 mmol/L" }],
+    "effectiveDateTime": "2026-03-20T08:00:00Z"
+  },
+  {
+    "resourceType": "Observation", "id": "l4", "status": "final",
+    "category": [{ "coding": [{ "code": "laboratory" }] }],
+    "code": { "coding": [{ "system": "http://loinc.org", "code": "2160-0", "display": "Creatinine [Mass/volume] in Serum or Plasma" }], "text": "Creatinine" },
+    "valueQuantity": { "value": 148, "unit": "µmol/L" },
+    "referenceRange": [{ "low": { "value": 64 }, "high": { "value": 111 }, "text": "64-111 µmol/L" }],
+    "interpretation": [{ "coding": [{ "code": "H", "display": "High" }] }],
+    "effectiveDateTime": "2026-03-20T08:00:00Z"
+  },
+  {
+    "resourceType": "Observation", "id": "l5", "status": "final",
+    "category": [{ "coding": [{ "code": "laboratory" }] }],
+    "code": { "coding": [{ "system": "http://loinc.org", "code": "33914-3", "display": "Glomerular filtration rate/1.73 sq M.predicted [Volume Rate/Area] in Serum or Plasma" }], "text": "eGFR" },
+    "valueQuantity": { "value": 42, "unit": "mL/min/1.73m²" },
+    "referenceRange": [{ "low": { "value": 60 }, "text": ">60 mL/min/1.73m²" }],
+    "interpretation": [{ "coding": [{ "code": "L", "display": "Low" }] }],
+    "effectiveDateTime": "2026-03-20T08:00:00Z"
+  },
+  {
+    "resourceType": "Observation", "id": "l6", "status": "final",
+    "category": [{ "coding": [{ "code": "laboratory" }] }],
+    "code": { "coding": [{ "system": "http://loinc.org", "code": "4548-4", "display": "Hemoglobin A1c/Hemoglobin.total in Blood" }], "text": "HbA1c" },
+    "valueQuantity": { "value": 58, "unit": "mmol/mol" },
+    "referenceRange": [{ "high": { "value": 48 }, "text": "<48 mmol/mol" }],
+    "interpretation": [{ "coding": [{ "code": "H", "display": "High" }] }],
+    "effectiveDateTime": "2026-02-14T09:30:00Z"
+  },
+  {
+    "resourceType": "Observation", "id": "l7", "status": "final",
+    "category": [{ "coding": [{ "code": "laboratory" }] }],
+    "code": { "coding": [{ "system": "http://loinc.org", "code": "1920-8", "display": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma" }], "text": "ALT" },
+    "valueQuantity": { "value": 28, "unit": "U/L" },
+    "referenceRange": [{ "high": { "value": 41 }, "text": "<41 U/L" }],
+    "effectiveDateTime": "2026-03-20T08:00:00Z"
+  },
+  {
+    "resourceType": "Observation", "id": "l8", "status": "final",
+    "category": [{ "coding": [{ "code": "laboratory" }] }],
+    "code": { "coding": [{ "system": "http://loinc.org", "code": "2085-9", "display": "Cholesterol in HDL [Mass/volume] in Serum or Plasma" }], "text": "HDL Cholesterol" },
+    "valueQuantity": { "value": 1.1, "unit": "mmol/L" },
+    "referenceRange": [{ "low": { "value": 1.0 }, "text": ">1.0 mmol/L" }],
+    "effectiveDateTime": "2026-01-08T08:00:00Z"
+  },
+  {
+    "resourceType": "Observation", "id": "l9", "status": "final",
+    "category": [{ "coding": [{ "code": "laboratory" }] }],
+    "code": { "coding": [{ "system": "http://loinc.org", "code": "2093-3", "display": "Cholesterol [Mass/volume] in Serum or Plasma" }], "text": "Total Cholesterol" },
+    "valueQuantity": { "value": 4.8, "unit": "mmol/L" },
+    "referenceRange": [{ "high": { "value": 5.0 }, "text": "<5.0 mmol/L" }],
+    "effectiveDateTime": "2026-01-08T08:00:00Z"
+  },
+  {
+    "resourceType": "Observation", "id": "l10", "status": "final",
+    "category": [{ "coding": [{ "code": "laboratory" }] }],
+    "code": { "coding": [{ "system": "http://loinc.org", "code": "1975-2", "display": "Bilirubin.total [Mass/volume] in Serum or Plasma" }], "text": "Total Bilirubin" },
+    "valueQuantity": { "value": 14, "unit": "µmol/L" },
+    "referenceRange": [{ "high": { "value": 21 }, "text": "<21 µmol/L" }],
+    "effectiveDateTime": "2026-03-20T08:00:00Z"
+  }
+]

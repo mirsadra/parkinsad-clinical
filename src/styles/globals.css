@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-body: "DM Sans", sans-serif;
+    --font-mono: "DM Mono", monospace;
+    --bg-base: #0f1117;
+    --bg-surface: #171b26;
+    --bg-elevated: #1e2333;
+    --border-color: #2a3044;
+    --text-primary: #f1f3f7;
+    --text-secondary: #9ca3af;
+    --clinical-critical: #e8403a;
+    --clinical-warning: #f59e0b;
+    --clinical-normal: #22c55e;
+    --clinical-info: #3b82f6;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    margin: 0;
+  }
+}
+
+@layer utilities {
+  .font-mono-data {
+    font-family: var(--font-mono);
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      #1e2333 25%,
+      #2a3044 50%,
+      #1e2333 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+    border-radius: 4px;
+  }
+
+  @keyframes pulse-border {
+    0%,
+    100% {
+      border-color: rgba(232, 64, 58, 0.5);
+    }
+    50% {
+      border-color: rgba(232, 64, 58, 1);
+    }
+  }
+
+  .allergy-critical {
+    animation: pulse-border 2s ease-in-out infinite;
+  }
+}

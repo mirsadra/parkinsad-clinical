@@ -1,0 +1,46 @@
+[
+  {
+    "resourceType": "Condition",
+    "id": "c1",
+    "code": { "coding": [{ "system": "http://snomed.info/sct", "code": "85977000", "display": "Heart failure with reduced ejection fraction" }], "text": "Heart failure with reduced ejection fraction (HFrEF)" },
+    "clinicalStatus": { "coding": [{ "code": "active" }] },
+    "verificationStatus": { "coding": [{ "code": "confirmed" }] },
+    "onsetDateTime": "2022-03-01",
+    "category": [{ "coding": [{ "code": "problem-list-item" }] }]
+  },
+  {
+    "resourceType": "Condition",
+    "id": "c2",
+    "code": { "coding": [{ "system": "http://snomed.info/sct", "code": "44054006", "display": "Type 2 diabetes mellitus" }], "text": "Type 2 diabetes mellitus" },
+    "clinicalStatus": { "coding": [{ "code": "active" }] },
+    "verificationStatus": { "coding": [{ "code": "confirmed" }] },
+    "onsetDateTime": "2018-06-10",
+    "category": [{ "coding": [{ "code": "problem-list-item" }] }]
+  },
+  {
+    "resourceType": "Condition",
+    "id": "c3",
+    "code": { "coding": [{ "system": "http://snomed.info/sct", "code": "49436004", "display": "Atrial fibrillation" }], "text": "Atrial fibrillation — permanent" },
+    "clinicalStatus": { "coding": [{ "code": "active" }] },
+    "verificationStatus": { "coding": [{ "code": "confirmed" }] },
+    "onsetDateTime": "2021-11-05",
+    "category": [{ "coding": [{ "code": "problem-list-item" }] }]
+  },
+  {
+    "resourceType": "Condition",
+    "id": "c4",
+    "code": { "coding": [{ "system": "http://snomed.info/sct", "code": "431855005", "display": "Chronic kidney disease stage 3" }], "text": "Chronic kidney disease stage 3 (eGFR 30–59)" },
+    "clinicalStatus": { "coding": [{ "code": "active" }] },
+    "verificationStatus": { "coding": [{ "code": "confirmed" }] },
+    "onsetDateTime": "2020-09-14",
+    "category": [{ "coding": [{ "code": "problem-list-item" }] }]
+  },
+  {
+    "resourceType": "Condition",
+    "id": "c5",
+    "code": { "coding": [{ "system": "http://snomed.info/sct", "display": "Hypertension" }], "text": "Hypertension" },
+    "clinicalStatus": { "coding": [{ "code": "active" }] },
+    "onsetDateTime": "2015-04-22",
+    "category": [{ "coding": [{ "code": "problem-list-item" }] }]
+  }
+]

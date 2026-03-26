@@ -1,0 +1,14 @@
+{
+  "resourceType": "Patient",
+  "id": "12742400",
+  "identifier": [
+    {
+      "system": "https://fhir.nhs.uk/Id/nhs-number",
+      "value": "9449304106"
+    }
+  ],
+  "name": [{ "family": "Smith", "given": ["James", "Robert"] }],
+  "birthDate": "1956-08-14",
+  "gender": "male",
+  "address": [{ "city": "Bury St Edmunds", "postalCode": "IP33 2QZ" }]
+}

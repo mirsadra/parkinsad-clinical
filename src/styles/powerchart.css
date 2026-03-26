@@ -1,0 +1,35 @@
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+#root {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+.data-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--bg-elevated);
+}
+
+@media (max-width: 1280px) {
+  .tab-nav-label {
+    display: none;
+  }
+  .tab-nav {
+    width: 48px !important;
+  }
+}

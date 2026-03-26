@@ -1,0 +1,44 @@
+[
+  {
+    "resourceType": "AllergyIntolerance",
+    "id": "a1",
+    "criticality": "high",
+    "type": "allergy",
+    "code": {
+      "coding": [{ "system": "http://snomed.info/sct", "code": "372687004", "display": "Penicillin" }],
+      "text": "Penicillin"
+    },
+    "reaction": [{ "description": "Anaphylaxis — throat swelling, hypotension", "severity": "severe" }],
+    "clinicalStatus": { "coding": [{ "code": "active" }] },
+    "verificationStatus": { "coding": [{ "code": "confirmed" }] },
+    "recordedDate": "2018-03-12"
+  },
+  {
+    "resourceType": "AllergyIntolerance",
+    "id": "a2",
+    "criticality": "low",
+    "type": "allergy",
+    "code": {
+      "coding": [{ "system": "http://snomed.info/sct", "code": "387207008", "display": "Ibuprofen" }],
+      "text": "Ibuprofen"
+    },
+    "reaction": [{ "description": "Urticaria and skin rash", "severity": "mild" }],
+    "clinicalStatus": { "coding": [{ "code": "active" }] },
+    "verificationStatus": { "coding": [{ "code": "confirmed" }] },
+    "recordedDate": "2020-07-05"
+  },
+  {
+    "resourceType": "AllergyIntolerance",
+    "id": "a3",
+    "criticality": "unable-to-assess",
+    "type": "intolerance",
+    "code": {
+      "coding": [{ "system": "http://snomed.info/sct", "display": "Metformin" }],
+      "text": "Metformin"
+    },
+    "reaction": [{ "description": "GI upset, nausea", "severity": "mild" }],
+    "clinicalStatus": { "coding": [{ "code": "active" }] },
+    "verificationStatus": { "coding": [{ "code": "unconfirmed" }] },
+    "recordedDate": "2021-01-20"
+  }
+]

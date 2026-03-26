@@ -1,0 +1,26 @@
+[
+  {
+    "resourceType": "Immunization",
+    "id": "imm1",
+    "status": "completed",
+    "vaccineCode": { "coding": [{ "system": "http://snomed.info/sct", "display": "COVID-19 mRNA vaccine" }], "text": "COVID-19 Vaccine (Pfizer-BioNTech)" },
+    "occurrenceDateTime": "2023-10-05",
+    "lotNumber": "EL1234",
+    "site": { "coding": [{ "display": "Left deltoid" }] }
+  },
+  {
+    "resourceType": "Immunization",
+    "id": "imm2",
+    "status": "completed",
+    "vaccineCode": { "coding": [{ "system": "http://snomed.info/sct", "display": "Influenza vaccine" }], "text": "Influenza vaccine 2025-26" },
+    "occurrenceDateTime": "2025-10-14",
+    "site": { "coding": [{ "display": "Left deltoid" }] }
+  },
+  {
+    "resourceType": "Immunization",
+    "id": "imm3",
+    "status": "completed",
+    "vaccineCode": { "coding": [{ "system": "http://snomed.info/sct", "display": "Pneumococcal polysaccharide vaccine" }], "text": "Pneumovax 23" },
+    "occurrenceDateTime": "2022-03-20"
+  }
+]

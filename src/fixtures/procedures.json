@@ -1,0 +1,25 @@
+[
+  {
+    "resourceType": "Procedure",
+    "id": "p1",
+    "status": "completed",
+    "code": { "coding": [{ "system": "http://snomed.info/sct", "display": "Echocardiography" }], "text": "Transthoracic echocardiogram" },
+    "performedDateTime": "2026-02-12",
+    "note": [{ "text": "EF 35% — severely impaired. Dilated LV. Mild MR." }]
+  },
+  {
+    "resourceType": "Procedure",
+    "id": "p2",
+    "status": "completed",
+    "code": { "coding": [{ "system": "http://snomed.info/sct", "display": "Coronary angiography" }], "text": "Coronary angiography" },
+    "performedDateTime": "2022-04-08",
+    "note": [{ "text": "Non-obstructive coronary artery disease." }]
+  },
+  {
+    "resourceType": "Procedure",
+    "id": "p3",
+    "status": "completed",
+    "code": { "coding": [{ "system": "http://snomed.info/sct", "display": "24-hour ambulatory blood pressure monitoring" }], "text": "24-hour ABPM" },
+    "performedDateTime": "2025-08-15"
+  }
+]
