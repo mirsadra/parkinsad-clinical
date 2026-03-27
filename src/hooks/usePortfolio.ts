@@ -106,7 +106,7 @@ export function usePortfolio() {
         queryFn: async () =>
           unwrapBundle<Observation>(
             await client.request<Bundle>(
-              `Observation?patient=${patientId}&category=vital-signs&_sort=-date&_count=50`
+              `Observation?patient=${patientId}&category=vital-signs&_sort=-date&_count=200`
             )
           ),
         staleTime: 60 * 1000,
