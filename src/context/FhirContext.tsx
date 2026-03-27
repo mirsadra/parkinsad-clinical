@@ -20,11 +20,13 @@ export function FhirProvider({ children }: { children: React.ReactNode }) {
         const token = client.getState("tokenResponse.access_token");
         const patientId = client.getPatientId();
         // console.warn survives the production console suppression in security.ts
+        const grantedScope = client.getState("tokenResponse.scope") as string | undefined;
         console.warn("[FHIR] ready() resolved", {
           hasToken: Boolean(token),
           tokenPrefix: typeof token === "string" ? token.slice(0, 8) + "…" : null,
           patientId,
           serverUrl: client.getState("serverUrl"),
+          grantedScope,
         });
         if (!patientId) throw new Error("No patient in context — please relaunch from PowerChart.");
         setValue({ client, patientId });
