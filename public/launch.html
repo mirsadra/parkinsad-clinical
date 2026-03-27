@@ -42,24 +42,25 @@
       FHIR.oauth2.authorize({
         clientId: "378c65fa-ca11-452b-96d9-f833a75531d1",
         // iss is intentionally omitted — Cerner EHR injects it via ?iss= query param
+        // SMART v2 granular scopes (.rs = read + search)
         scope: [
           "launch",
           "openid",
           "fhirUser",
-          "patient/Patient.read",
-          "patient/AllergyIntolerance.read",
-          "patient/Condition.read",
-          "patient/Encounter.read",
-          "patient/Observation.read",
-          "patient/Procedure.read",
-          "patient/DiagnosticReport.read",
-          "patient/DocumentReference.read",
-          "patient/FamilyMemberHistory.read",
-          "patient/Immunization.read",
-          "patient/MedicationAdministration.read",
-          "patient/MedicationDispense.read",
-          "patient/MedicationRequest.read",
-          "patient/ServiceRequest.read"
+          "patient/Patient.rs",
+          "patient/AllergyIntolerance.rs",
+          "patient/Condition.rs",
+          "patient/Encounter.rs",
+          "patient/Observation.rs",
+          "patient/Procedure.rs",
+          "patient/DiagnosticReport.rs",
+          "patient/DocumentReference.rs",
+          "patient/FamilyMemberHistory.rs",
+          "patient/Immunization.rs",
+          "patient/MedicationAdministration.rs",
+          "patient/MedicationDispense.rs",
+          "patient/MedicationRequest.rs",
+          "patient/ServiceRequest.rs"
         ].join(" "),
         completeInTarget: true
       });
