@@ -123,7 +123,7 @@ export default function App() {
             isLoading={portfolio.isLoading}
           />
         );
-      case "calculators":
+      case "kidney":
         return (
           <CalculatorsPanel
             patient={portfolio.patient}

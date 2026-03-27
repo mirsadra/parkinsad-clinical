@@ -8,7 +8,7 @@ import {
   Heart,
   Scissors,
   Syringe,
-  Calculator,
+  Gauge,
 } from "lucide-react";
 import type { TabId } from "../types/fhir";
 
@@ -28,7 +28,7 @@ const TABS: TabConfig[] = [
   { id: "conditions", label: "Conditions", icon: Heart },
   { id: "procedures", label: "Procedures", icon: Scissors },
   { id: "immunisations", label: "Immunisations", icon: Syringe },
-  { id: "calculators", label: "Calculators", icon: Calculator },
+  { id: "kidney", label: "Kidney", icon: Gauge },
 ];
 
 interface TabNavProps {

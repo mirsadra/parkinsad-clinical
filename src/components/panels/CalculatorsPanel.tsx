@@ -9,7 +9,7 @@ interface CalculatorsPanelProps {
   labs: PortfolioData["labs"];
 }
 
-// ─── Pure calculation types & logic ───────────────────────────────────────────
+// ─── Pure calculation logic ───────────────────────────────────────────────────
 
 interface CgInputs {
   sex: "female" | "male";
@@ -54,28 +54,18 @@ function calcCg({ sex, age, weightKg, creatinineUmol, heightCm }: CgInputs): CgR
   if (bmi < 25) {
     const ibwCrCl = cgWith(ibwKg);
     return {
-      originalCrCl,
-      bmi,
-      ibwKg,
-      weightCategory: "normal",
-      ibwCrCl,
+      originalCrCl, bmi, ibwKg, weightCategory: "normal", ibwCrCl,
       rangeLow: Math.min(originalCrCl, ibwCrCl),
       rangeHigh: Math.max(originalCrCl, ibwCrCl),
     };
   }
 
-  // Overweight / obese
   const abwKg = ibwKg + 0.4 * (weightKg - ibwKg);
   const abwCrCl = cgWith(abwKg);
   const ibwCrCl = cgWith(ibwKg);
   return {
-    originalCrCl,
-    bmi,
-    ibwKg,
-    abwKg,
-    weightCategory: "overweight",
-    ibwCrCl,
-    abwCrCl,
+    originalCrCl, bmi, ibwKg, abwKg, weightCategory: "overweight",
+    ibwCrCl, abwCrCl,
     rangeLow: Math.min(abwCrCl, ibwCrCl),
     rangeHigh: Math.max(abwCrCl, ibwCrCl),
   };
@@ -108,15 +98,33 @@ function getAge(birthDate: string): number {
   return age;
 }
 
-function getLatestByLoinc(
-  observations: Observation[],
-  codes: string[]
-): Observation | undefined {
+function getLatestByLoinc(observations: Observation[], codes: string[]): Observation | undefined {
   return observations
     .filter((o) => o.code?.coding?.some((c) => codes.includes(c.code ?? "")))
-    .sort((a, b) =>
-      (b.effectiveDateTime ?? "").localeCompare(a.effectiveDateTime ?? "")
-    )[0];
+    .sort((a, b) => (b.effectiveDateTime ?? "").localeCompare(a.effectiveDateTime ?? ""))[0];
+}
+
+/** Convert a quantity to cm, handling common UCUM units. Returns undefined if unreasonable. */
+function parseHeightToCm(obs: Observation): number | undefined {
+  const val = obs.valueQuantity?.value;
+  if (val == null) return undefined;
+
+  const unit = (obs.valueQuantity?.unit ?? obs.valueQuantity?.code ?? "").toLowerCase().trim();
+
+  let cm: number;
+  if (unit === "[in_i]" || unit === "in" || unit === "[in_us]" || unit === "inches") {
+    cm = val * 2.54;
+  } else if (unit === "m") {
+    cm = val * 100;
+  } else if (unit === "mm") {
+    cm = val / 10;
+  } else {
+    cm = val; // assume cm
+  }
+
+  // Sanity check — reject values outside plausible human range
+  if (cm < 100 || cm > 250) return undefined;
+  return cm;
 }
 
 function creatinineToUmol(obs: Observation): number | undefined {
@@ -127,6 +135,39 @@ function creatinineToUmol(obs: Observation): number | undefined {
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
+
+/** A single read-only chart value row */
+function ChartParam({
+  label,
+  value,
+  unit,
+  loading,
+}: {
+  label: string;
+  value?: string | number;
+  unit?: string;
+  loading?: boolean;
+}) {
+  return (
+    <div className="flex items-baseline justify-between py-2.5 border-b border-[#2A3044] last:border-0">
+      <span className="text-xs font-medium text-[#6B7280] uppercase tracking-wider">{label}</span>
+      <div className="flex items-baseline gap-1.5">
+        {loading ? (
+          <span className="inline-block w-16 h-3.5 rounded skeleton" />
+        ) : value == null ? (
+          <span className="text-xs text-[#6B7280] italic">Not in chart</span>
+        ) : (
+          <>
+            <span className="text-sm font-mono-data font-medium text-[#F1F3F7] tabular-nums">
+              {value}
+            </span>
+            {unit && <span className="text-xs text-[#6B7280]">{unit}</span>}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
 
 function ResultCard({
   value,
@@ -142,9 +183,7 @@ function ResultCard({
     <div
       className={[
         "p-4 rounded-lg border",
-        primary
-          ? "bg-[#171B26] border-[#2A3044]"
-          : "bg-[#0F1117] border-[#2A3044]",
+        primary ? "bg-[#171B26] border-[#2A3044]" : "bg-[#0F1117] border-[#2A3044]",
       ].join(" ")}
     >
       <div className="flex items-baseline gap-2 flex-wrap">
@@ -183,13 +222,7 @@ function RangeCard({ low, high, note }: { low: number; high: number; note: strin
   );
 }
 
-function InfoSection({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
+function InfoSection({ title, children }: { title: string; children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="border border-[#2A3044] rounded-lg overflow-hidden">
@@ -221,58 +254,48 @@ const INPUT_CLS =
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
+// LOINC codes that may carry a patient height (measured, stated, lying, standing)
+const HEIGHT_LOINCS = ["8302-2", "3137-7", "8306-3", "8308-9"];
+// LOINC codes for serum / blood creatinine
+const CREATININE_LOINCS = ["2160-0", "14682-9", "38483-4"];
+
 export function CalculatorsPanel({ patient, vitals, labs }: CalculatorsPanelProps) {
-  const [sex, setSex] = useState<"female" | "male">("female");
-  const [ageStr, setAgeStr] = useState("");
-  const [weightStr, setWeightStr] = useState("");
-  const [creatinineStr, setCreatinineStr] = useState("");
   const [heightStr, setHeightStr] = useState("");
   const autoPopulated = useRef(false);
 
-  // Pre-populate from FHIR data once available
+  // ── Derived chart values (read-only) ──────────────────────────────────────
+  const sex: "female" | "male" = patient?.gender === "female" ? "female" : "male";
+  const age = patient?.birthDate ? getAge(patient.birthDate) : undefined;
+
+  const weightObs = getLatestByLoinc(vitals, ["29463-7"]);
+  const weightKg = weightObs?.valueQuantity?.value ?? undefined;
+
+  const creatObs = getLatestByLoinc(labs, CREATININE_LOINCS);
+  const creatinineUmol = creatObs ? creatinineToUmol(creatObs) : undefined;
+
+  // ── Auto-populate height once, from most recent valid observation ──────────
   useEffect(() => {
-    if (autoPopulated.current || !patient) return;
-
-    if (patient.gender === "female" || patient.gender === "male") {
-      setSex(patient.gender);
+    if (autoPopulated.current) return;
+    const obs = getLatestByLoinc(vitals, HEIGHT_LOINCS);
+    if (!obs) return;
+    const cm = parseHeightToCm(obs);
+    if (cm != null) {
+      setHeightStr(String(Math.round(cm)));
     }
-    if (patient.birthDate) {
-      const age = getAge(patient.birthDate);
-      if (age > 0) setAgeStr(String(age));
-    }
-
-    const weightObs = getLatestByLoinc(vitals, ["29463-7"]);
-    if (weightObs?.valueQuantity?.value != null) {
-      setWeightStr(String(Math.round(weightObs.valueQuantity.value)));
-    }
-
-    const heightObs = getLatestByLoinc(vitals, ["8302-2"]);
-    if (heightObs?.valueQuantity?.value != null) {
-      setHeightStr(String(Math.round(heightObs.valueQuantity.value)));
-    }
-
-    const creatObs = getLatestByLoinc(labs, ["2160-0", "14682-9", "38483-4"]);
-    if (creatObs) {
-      const umol = creatinineToUmol(creatObs);
-      if (umol != null) setCreatinineStr(String(Math.round(umol)));
-    }
-
     autoPopulated.current = true;
-  }, [patient, vitals, labs]);
+  }, [vitals]);
 
-  // Parse inputs
-  const age = parseFloat(ageStr);
-  const weightKg = parseFloat(weightStr);
-  const creatinineUmol = parseFloat(creatinineStr);
+  // ── Calculation ────────────────────────────────────────────────────────────
   const heightCm = heightStr ? parseFloat(heightStr) : undefined;
+  const isLoading = !patient;
 
   const canCalculate =
-    isFinite(age) && age > 0 &&
-    isFinite(weightKg) && weightKg > 0 &&
-    isFinite(creatinineUmol) && creatinineUmol > 0;
+    age != null && age > 0 &&
+    weightKg != null && weightKg > 0 &&
+    creatinineUmol != null && creatinineUmol > 0;
 
   const result = useMemo<CgResults | null>(() => {
-    if (!canCalculate) return null;
+    if (!canCalculate || age == null || weightKg == null || creatinineUmol == null) return null;
     return calcCg({ sex, age, weightKg, creatinineUmol, heightCm });
   }, [sex, age, weightKg, creatinineUmol, heightCm, canCalculate]);
 
@@ -280,136 +303,85 @@ export function CalculatorsPanel({ patient, vitals, labs }: CalculatorsPanelProp
     <div className="panel-content p-6 space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-sm font-semibold text-[#F1F3F7]">
-          Creatinine Clearance (Cockcroft-Gault)
-        </h2>
+        <h2 className="text-sm font-semibold text-[#F1F3F7]">Kidney Profile</h2>
         <p className="text-xs text-[#6B7280] mt-0.5">
-          For patients with stable renal function. Provide height for weight-adjusted estimates.
+          Creatinine clearance (Cockcroft-Gault) · For patients with stable renal function
         </p>
       </div>
 
-      {/* Inputs + Results */}
+      {/* Inputs + Results grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* ── Inputs ── */}
+        {/* ── Left: parameters ── */}
         <div className="space-y-4">
-          {/* Sex */}
+          {/* Chart values (read-only) */}
           <div>
-            <span className="block text-xs font-medium text-[#9CA3AF] uppercase tracking-wider mb-2">
-              Sex
-            </span>
-            <div className="inline-flex rounded-md overflow-hidden border border-[#2A3044]">
-              {(["female", "male"] as const).map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => setSex(s)}
-                  className={[
-                    "px-5 py-2 text-sm font-medium transition-colors duration-150",
-                    sex === s
-                      ? "bg-[#3B82F6] text-white"
-                      : "bg-[#171B26] text-[#9CA3AF] hover:text-[#F1F3F7] hover:bg-[#1A1F2E]",
-                  ].join(" ")}
-                >
-                  {s === "female" ? "Female" : "Male"}
-                </button>
-              ))}
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#6B7280] mb-1">
+              From chart
+            </p>
+            <div className="bg-[#171B26] border border-[#2A3044] rounded-lg px-4">
+              <ChartParam
+                label="Sex"
+                value={patient ? (patient.gender === "female" ? "Female" : "Male") : undefined}
+                loading={isLoading}
+              />
+              <ChartParam label="Age" value={age} unit="years" loading={isLoading} />
+              <ChartParam label="Weight" value={weightKg != null ? weightKg : undefined} unit="kg" loading={isLoading} />
+              <ChartParam
+                label="Creatinine"
+                value={creatinineUmol != null ? Math.round(creatinineUmol) : undefined}
+                unit="µmol/L"
+                loading={isLoading}
+              />
             </div>
           </div>
 
-          {/* Age */}
+          {/* Height (editable) */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-medium text-[#9CA3AF] uppercase tracking-wider">
-                Age
-              </label>
-              <span className="text-xs text-[#6B7280]">years</span>
-            </div>
-            <input
-              type="number"
-              min={1}
-              max={130}
-              value={ageStr}
-              onChange={(e) => setAgeStr(e.target.value)}
-              placeholder="e.g. 65"
-              className={INPUT_CLS}
-            />
-          </div>
-
-          {/* Weight */}
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-medium text-[#9CA3AF] uppercase tracking-wider">
-                Weight
-              </label>
-              <span className="text-xs text-[#6B7280]">kg · Norm: 1–150</span>
-            </div>
-            <input
-              type="number"
-              min={1}
-              max={300}
-              step={0.1}
-              value={weightStr}
-              onChange={(e) => setWeightStr(e.target.value)}
-              placeholder="e.g. 70"
-              className={INPUT_CLS}
-            />
-          </div>
-
-          {/* Creatinine */}
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-medium text-[#9CA3AF] uppercase tracking-wider">
-                Creatinine
-              </label>
-              <span className="text-xs text-[#6B7280]">µmol/L · Norm: 62–115</span>
-            </div>
-            <input
-              type="number"
-              min={1}
-              step={1}
-              value={creatinineStr}
-              onChange={(e) => setCreatinineStr(e.target.value)}
-              placeholder="e.g. 90"
-              className={INPUT_CLS}
-            />
-          </div>
-
-          {/* Height (optional) */}
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-medium text-[#9CA3AF] uppercase tracking-wider">
+              <label
+                htmlFor="height-input"
+                className="text-xs font-medium text-[#9CA3AF] uppercase tracking-wider"
+              >
                 Height{" "}
                 <span className="normal-case font-normal text-[#6B7280]">(optional)</span>
               </label>
               <span className="text-xs text-[#6B7280]">cm · Norm: 152–213</span>
             </div>
             <input
+              id="height-input"
               type="number"
               min={100}
               max={250}
               step={0.5}
               value={heightStr}
               onChange={(e) => setHeightStr(e.target.value)}
-              placeholder="e.g. 170"
+              placeholder="Enter or adjust height"
               className={INPUT_CLS}
             />
             <p className="text-xs text-[#6B7280] mt-1">
-              Enables BMI-based weight adjustment
+              Enter estimated or measured height. Enables BMI-based weight adjustment.
             </p>
           </div>
         </div>
 
-        {/* ── Results ── */}
+        {/* ── Right: results ── */}
         <div className="space-y-3">
-          {!canCalculate ? (
+          {isLoading ? (
+            <div className="space-y-3">
+              <div className="h-24 rounded-lg skeleton" />
+              <div className="h-16 rounded-lg skeleton" />
+            </div>
+          ) : !canCalculate ? (
             <div className="flex items-center justify-center h-40 rounded-lg border border-dashed border-[#2A3044]">
-              <p className="text-sm text-[#6B7280]">
-                Fill in sex, age, weight, and creatinine to calculate
+              <p className="text-sm text-[#6B7280] text-center px-4">
+                {!patient
+                  ? "Loading patient data…"
+                  : "Weight and creatinine are required to calculate"}
               </p>
             </div>
           ) : result === null ? (
             <div className="p-4 bg-[#171B26] border border-[#2A3044] rounded-lg text-xs text-[#E8403A]">
-              Invalid inputs — check that age &lt; 140 and all values are positive.
+              Unable to calculate — check that age &lt; 140 and all values are positive.
             </div>
           ) : (
             <>
@@ -422,7 +394,7 @@ export function CalculatorsPanel({ patient, vitals, labs }: CalculatorsPanelProp
                     primary
                   />
                   <p className="text-xs text-[#6B7280] italic px-1">
-                    Add height to calculate BMI and provide weight-adjusted estimates.
+                    Enter height to calculate BMI and provide weight-adjusted estimates.
                   </p>
                 </>
               )}
@@ -461,7 +433,7 @@ export function CalculatorsPanel({ patient, vitals, labs }: CalculatorsPanelProp
                 <>
                   <ResultCard
                     value={result.abwCrCl!}
-                    label={`Creatinine clearance for overweight/obese patient (BMI ${result.bmi!.toFixed(1)} kg/m²), using adjusted body weight of ${Math.round(result.abwKg!)} kg (ABW).`}
+                    label={`Creatinine clearance for overweight/obese patient (BMI ${result.bmi!.toFixed(1)} kg/m²), using adjusted body weight of ${Math.round(result.abwKg!)} kg.`}
                     primary
                   />
                   <RangeCard
@@ -476,23 +448,23 @@ export function CalculatorsPanel({ patient, vitals, labs }: CalculatorsPanelProp
         </div>
       </div>
 
-      {/* ── Collapsible info sections ── */}
+      {/* Collapsible reference sections */}
       <div className="space-y-2">
         <InfoSection title="Advice">
           <p>
-            The relationship between creatinine and kidney function is curvilinear — a greater decline
-            in kidney function occurs as serum creatinine rises from 1 to 2 mg/dL compared to
-            4 to 5 mg/dL.
+            The relationship between creatinine and kidney function is curvilinear — a greater
+            decline in kidney function occurs as serum creatinine rises from 1 to 2 mg/dL compared
+            to 4 to 5 mg/dL.
           </p>
           <p>
             Patients with decreased eGFR have kidney disease and are at higher risk of acute kidney
-            injury and progressive kidney disease. Management of modifiable risk factors such as blood
-            sugar and blood pressure control is critical to slowing progression.
+            injury and progressive kidney disease. Management of modifiable risk factors such as
+            blood sugar and blood pressure control is critical to slowing progression.
           </p>
           <p>
-            Medications should be dose-adjusted for the most recent available estimate of kidney
-            function. Common cutoffs: &lt;60, &lt;45, and &lt;30 mL/min/1.73m², plus adjustments for
-            dialysis patients.
+            Medications should be dose-adjusted for the most recent estimate of kidney function.
+            Common cutoffs: &lt;60, &lt;45, and &lt;30 mL/min/1.73m², plus adjustments for dialysis
+            patients.
           </p>
         </InfoSection>
 
@@ -510,15 +482,9 @@ export function CalculatorsPanel({ patient, vitals, labs }: CalculatorsPanelProp
           </p>
           <p className="text-[#6B7280] mt-1">Creatinine conversion: µmol/L ÷ 88.4 = mg/dL</p>
           <p className="font-semibold text-[#F1F3F7] mt-2">IBW (Devine equation)</p>
-          <p className="font-mono-data">
-            IBW male = 50 + 2.3 × (height, inches – 60)
-          </p>
-          <p className="font-mono-data">
-            IBW female = 45.5 + 2.3 × (height, inches – 60)
-          </p>
-          <p className="font-mono-data mt-1">
-            ABW = IBW + 0.4 × (actual weight – IBW)
-          </p>
+          <p className="font-mono-data">IBW male = 50 + 2.3 × (height, inches – 60)</p>
+          <p className="font-mono-data">IBW female = 45.5 + 2.3 × (height, inches – 60)</p>
+          <p className="font-mono-data mt-1">ABW = IBW + 0.4 × (actual weight – IBW)</p>
           <p className="font-semibold text-[#F1F3F7] mt-2">Weight adjustment by BMI</p>
           <table className="w-full text-[#9CA3AF] mt-1">
             <thead>
