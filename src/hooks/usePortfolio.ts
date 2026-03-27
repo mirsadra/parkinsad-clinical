@@ -15,6 +15,16 @@ import type {
   Bundle,
 } from "../types/fhir";
 
+// Don't retry on 4xx — Cerner returns 403 for scope/auth problems and
+// hammering the endpoint won't help.
+function noRetryOn4xx(failureCount: number, error: unknown): boolean {
+  if (error && typeof error === "object" && "status" in error) {
+    const status = (error as { status: number }).status;
+    if (status >= 400 && status < 500) return false;
+  }
+  return failureCount < 2;
+}
+
 export function usePortfolio() {
   const { client, patientId } = useFhir();
 
@@ -22,8 +32,24 @@ export function usePortfolio() {
     queries: [
       {
         queryKey: ["patient", patientId],
-        queryFn: () => client.request<Patient>(`Patient/${patientId}`),
+        queryFn: async () => {
+          try {
+            return await client.request<Patient>(`Patient/${patientId}`);
+          } catch (err: unknown) {
+            // Log full error so we can diagnose 403 in production (console.warn is not suppressed)
+            console.warn("[FHIR] Patient request failed", {
+              patientId,
+              error: err,
+              status: err && typeof err === "object" && "status" in err
+                ? (err as { status: number }).status
+                : "unknown",
+              message: err instanceof Error ? err.message : String(err),
+            });
+            throw err;
+          }
+        },
         staleTime: 5 * 60 * 1000,
+        retry: noRetryOn4xx,
       },
       {
         queryKey: ["allergyIntolerance", patientId],
@@ -33,6 +59,7 @@ export function usePortfolio() {
               `AllergyIntolerance?patient=${patientId}&_count=100`
             )
           ),
+        retry: noRetryOn4xx,
       },
       {
         queryKey: ["medicationRequest", patientId],
@@ -42,6 +69,7 @@ export function usePortfolio() {
               `MedicationRequest?patient=${patientId}&status=active&_count=100`
             )
           ),
+        retry: noRetryOn4xx,
       },
       {
         queryKey: ["medicationAdministration", patientId],
@@ -51,6 +79,7 @@ export function usePortfolio() {
               `MedicationAdministration?patient=${patientId}&_count=100`
             )
           ),
+        retry: noRetryOn4xx,
       },
       {
         queryKey: ["medicationDispense", patientId],
@@ -60,6 +89,7 @@ export function usePortfolio() {
               `MedicationDispense?patient=${patientId}&_count=100`
             )
           ),
+        retry: noRetryOn4xx,
       },
       {
         queryKey: ["condition", patientId],
@@ -69,6 +99,7 @@ export function usePortfolio() {
               `Condition?patient=${patientId}&_count=100`
             )
           ),
+        retry: noRetryOn4xx,
       },
       {
         queryKey: ["observation-vitals", patientId],
@@ -79,6 +110,7 @@ export function usePortfolio() {
             )
           ),
         staleTime: 60 * 1000,
+        retry: noRetryOn4xx,
       },
       {
         queryKey: ["observation-labs", patientId],
@@ -89,6 +121,7 @@ export function usePortfolio() {
             )
           ),
         staleTime: 2 * 60 * 1000,
+        retry: noRetryOn4xx,
       },
       {
         queryKey: ["encounter", patientId],
@@ -98,6 +131,7 @@ export function usePortfolio() {
               `Encounter?patient=${patientId}&_sort=-date&_count=20`
             )
           ),
+        retry: noRetryOn4xx,
       },
       {
         queryKey: ["immunization", patientId],
@@ -107,6 +141,7 @@ export function usePortfolio() {
               `Immunization?patient=${patientId}&_count=100`
             )
           ),
+        retry: noRetryOn4xx,
       },
       {
         queryKey: ["procedure", patientId],
@@ -116,6 +151,7 @@ export function usePortfolio() {
               `Procedure?patient=${patientId}&_sort=-date&_count=50`
             )
           ),
+        retry: noRetryOn4xx,
       },
     ],
   });

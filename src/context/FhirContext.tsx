@@ -19,8 +19,10 @@ export function FhirProvider({ children }: { children: React.ReactNode }) {
         // Debug: log token state so we can confirm the token is present
         const token = client.getState("tokenResponse.access_token");
         const patientId = client.getPatientId();
-        console.debug("[FHIR] ready() resolved", {
+        // console.warn survives the production console suppression in security.ts
+        console.warn("[FHIR] ready() resolved", {
           hasToken: Boolean(token),
+          tokenPrefix: typeof token === "string" ? token.slice(0, 8) + "…" : null,
           patientId,
           serverUrl: client.getState("serverUrl"),
         });
