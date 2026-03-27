@@ -36,8 +36,12 @@
     <div class="spinner"></div>
     <p>Connecting to clinical records…</p>
     <script>
+      // Enable fhirclient debug logging (visible in browser console)
+      localStorage.debug = "FHIR.*";
+
       FHIR.oauth2.authorize({
-        client_id: "378c65fa-ca11-452b-96d9-f833a75531d1",
+        clientId: "378c65fa-ca11-452b-96d9-f833a75531d1",
+        // iss is intentionally omitted — Cerner EHR injects it via ?iss= query param
         scope: [
           "launch",
           "openid",

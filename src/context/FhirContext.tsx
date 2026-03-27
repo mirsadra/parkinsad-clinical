@@ -16,7 +16,14 @@ export function FhirProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     getClient()
       .then((client) => {
+        // Debug: log token state so we can confirm the token is present
+        const token = client.getState("tokenResponse.access_token");
         const patientId = client.getPatientId();
+        console.debug("[FHIR] ready() resolved", {
+          hasToken: Boolean(token),
+          patientId,
+          serverUrl: client.getState("serverUrl"),
+        });
         if (!patientId) throw new Error("No patient in context — please relaunch from PowerChart.");
         setValue({ client, patientId });
       })
