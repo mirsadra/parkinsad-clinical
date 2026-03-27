@@ -30,4 +30,5 @@ export type TabId =
   | "encounters"
   | "conditions"
   | "procedures"
-  | "immunisations";
+  | "immunisations"
+  | "calculators";

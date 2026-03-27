@@ -37,6 +37,11 @@ const ImmunisationsPanel = lazy(() =>
     default: m.ImmunisationsPanel,
   }))
 );
+const CalculatorsPanel = lazy(() =>
+  import("./components/panels/CalculatorsPanel").then((m) => ({
+    default: m.CalculatorsPanel,
+  }))
+);
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabId>("overview");
@@ -116,6 +121,14 @@ export default function App() {
           <ImmunisationsPanel
             immunizations={portfolio.immunizations}
             isLoading={portfolio.isLoading}
+          />
+        );
+      case "calculators":
+        return (
+          <CalculatorsPanel
+            patient={portfolio.patient}
+            vitals={portfolio.vitals}
+            labs={portfolio.labs}
           />
         );
     }
