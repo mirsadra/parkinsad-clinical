@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Clinical Portfolio — Launching…</title>
-    <script src="https://cdn.jsdelivr.net/npm/fhirclient/build/fhir-client.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fhirclient@2.6.3/build/fhir-client.js"></script>
     <style>
       body {
         background: #0f1117;
@@ -42,17 +42,15 @@
           "launch",
           "openid",
           "fhirUser",
-          // User Product APIs — registered in console as user-facing, require user/ prefix
-          "user/Patient.read",
-          "user/AllergyIntolerance.read",
-          "user/Condition.read",
-          "user/Encounter.read",
-          "user/Location.read",
-          "user/Observation.read",
-          "user/Organization.read",
-          "user/Practitioner.read",
-          "user/Procedure.read",
-          // Patient Product APIs — registered as patient-facing, require patient/ prefix
+          "patient/Patient.read",
+          "patient/AllergyIntolerance.read",
+          "patient/Condition.read",
+          "patient/Encounter.read",
+          "patient/Location.read",
+          "patient/Observation.read",
+          "patient/Organization.read",
+          "patient/Practitioner.read",
+          "patient/Procedure.read",
           "patient/DiagnosticReport.read",
           "patient/DocumentReference.read",
           "patient/FamilyMemberHistory.read",
