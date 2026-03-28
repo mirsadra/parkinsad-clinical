@@ -1,0 +1,39 @@
+<h2>When does the tech enter community meds into the app?</h2>
+<p class="subtitle">This determines the whole workflow. Which fits how technicians actually work?</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Before bedside — from screen</h3>
+      <p>Tech opens SystmOne/HIE on one screen, enters meds into our app on another. App shows discrepancies vs inpatient FHIR meds immediately. Tech prints our app's comparison view and takes it to the patient — one structured sheet instead of two printouts.</p>
+      <div style="background:#1a2a1a;border-left:3px solid #4a9a4a;padding:8px 12px;margin-top:8px;border-radius:4px;font-size:13px;color:#aaa">
+        SCR/HIE (screen) → enter into app → comparison view → <strong>print</strong> → bedside → annotate → return → generate Task note
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>After bedside — from annotated printout</h3>
+      <p>Tech still prints from SystmOne/HIE as today and goes bedside as normal. On return, they open our app and enter what they found, using their annotated printout as the source. App then compares, highlights discrepancies, and generates the Task note.</p>
+      <div style="background:#1a2a1a;border-left:3px solid #4a9a4a;padding:8px 12px;margin-top:8px;border-radius:4px;font-size:13px;color:#aaa">
+        Print (as today) → bedside → annotate → return → enter into app → comparison + Task note generated
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Flexible — app supports both moments</h3>
+      <p>Tech can use the app either way. If they enter before bedside they get a better printout. If they enter after, they still get the Task note generated. The app doesn't force a specific moment.</p>
+      <div style="background:#1a2a1a;border-left:3px solid #4a9a4a;padding:8px 12px;margin-top:8px;border-radius:4px;font-size:13px;color:#aaa">
+        Either flow works — same app, same comparison, same Task note output
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:20px">My lean: <strong>B first, C as the goal.</strong> Starting with after-bedside entry requires the least behaviour change and still delivers the biggest win (Task note + discrepancy summary). Once adopted, offering the before-bedside flow is a natural upgrade.</p>

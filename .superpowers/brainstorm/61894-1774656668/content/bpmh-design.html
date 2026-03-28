@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BPMH Panel Design</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0a0a; color: #e5e5e5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; padding: 24px; }
+
+  h1 { font-size: 18px; font-weight: 600; margin-bottom: 6px; color: #fff; }
+  h2 { font-size: 15px; font-weight: 600; margin-bottom: 12px; color: #fff; }
+  h3 { font-size: 13px; font-weight: 600; color: #fff; }
+  .subtitle { color: #888; font-size: 13px; margin-bottom: 24px; }
+
+  /* Tab bar (simulating the app's existing tab structure) */
+  .app-chrome { background: #111; border: 1px solid #222; border-radius: 8px; overflow: hidden; }
+  .tab-bar { background: #111; border-bottom: 1px solid #222; display: flex; padding: 0 16px; gap: 2px; }
+  .tab { padding: 10px 14px; font-size: 12px; color: #666; border-bottom: 2px solid transparent; cursor: pointer; }
+  .tab.active { color: #fff; border-bottom-color: #3b82f6; }
+  .tab-content { padding: 16px; }
+
+  /* Step indicator */
+  .steps { display: flex; gap: 0; margin-bottom: 20px; }
+  .step { flex: 1; display: flex; align-items: center; gap: 0; }
+  .step-dot { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .step-dot.done { background: #166534; color: #4ade80; }
+  .step-dot.active { background: #1d4ed8; color: #93c5fd; }
+  .step-dot.pending { background: #1f1f1f; color: #555; border: 1px solid #333; }
+  .step-label { font-size: 11px; color: #888; margin-left: 6px; white-space: nowrap; }
+  .step-label.active { color: #93c5fd; }
+  .step-line { flex: 1; height: 1px; background: #222; margin: 0 8px; }
+
+  /* Section cards */
+  .section { background: #111; border: 1px solid #1f1f1f; border-radius: 6px; margin-bottom: 12px; overflow: hidden; }
+  .section-header { padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+  .section-header h3 { font-size: 13px; }
+  .section-body { padding: 14px; border-top: 1px solid #1f1f1f; }
+  .badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+  .badge-done { background: #14532d; color: #4ade80; }
+  .badge-active { background: #1e3a8a; color: #93c5fd; }
+  .badge-pending { background: #1f1f1f; color: #555; }
+
+  /* Form controls */
+  .field-row { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+  .field { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 120px; }
+  .field label { font-size: 11px; color: #888; }
+  .field input, .field select { background: #0a0a0a; border: 1px solid #2a2a2a; border-radius: 4px; padding: 6px 10px; color: #e5e5e5; font-size: 13px; outline: none; width: 100%; }
+  .field input:focus, .field select:focus { border-color: #3b82f6; }
+
+  /* Checkboxes row */
+  .check-group { display: flex; flex-wrap: wrap; gap: 10px; }
+  .check-item { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+  .check-item input { width: 14px; height: 14px; accent-color: #3b82f6; }
+
+  /* Medication entry */
+  .med-entry { background: #0d0d0d; border: 1px solid #1f1f1f; border-radius: 5px; padding: 12px; margin-bottom: 8px; }
+  .med-entry-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .med-name { font-size: 13px; font-weight: 500; color: #fff; }
+  .med-detail { font-size: 12px; color: #888; }
+  .btn-small { font-size: 11px; padding: 3px 8px; border-radius: 3px; border: 1px solid #333; background: #1a1a1a; color: #aaa; cursor: pointer; }
+  .btn-small:hover { background: #222; color: #fff; }
+
+  /* Add medication button */
+  .btn-add { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #3b82f6; border: 1px dashed #1e3a8a; border-radius: 5px; padding: 8px 12px; cursor: pointer; background: transparent; width: 100%; justify-content: center; margin-top: 4px; }
+  .btn-add:hover { background: #0f172a; }
+
+  /* Comparison table */
+  .comp-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .comp-table th { text-align: left; padding: 6px 10px; color: #666; font-weight: 500; border-bottom: 1px solid #1f1f1f; font-size: 11px; }
+  .comp-table td { padding: 8px 10px; border-bottom: 1px solid #111; vertical-align: top; }
+  .comp-table tr:last-child td { border-bottom: none; }
+  .comp-table tr:hover td { background: #111; }
+
+  .status-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 10px; white-space: nowrap; }
+  .status-match { background: #14532d; color: #4ade80; }
+  .status-discrepancy { background: #78350f; color: #fbbf24; }
+  .status-inpatient-only { background: #1e3a8a; color: #93c5fd; }
+  .status-community-only { background: #1f1f1f; color: #9ca3af; }
+
+  .drug-name { font-weight: 500; color: #e5e5e5; }
+  .drug-detail { color: #888; font-size: 11px; margin-top: 2px; }
+  .discrepancy-note { color: #fbbf24; font-size: 11px; margin-top: 3px; }
+  .discrepancy-note.info { color: #93c5fd; }
+
+  /* Special flags */
+  .flag { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; padding: 1px 6px; border-radius: 10px; margin-left: 6px; }
+  .flag-insulin { background: #1e1b4b; color: #a5b4fc; }
+  .flag-timing { background: #1a0a2e; color: #c084fc; }
+
+  /* Task note section */
+  .note-section { margin-bottom: 14px; }
+  .note-label { font-size: 11px; color: #888; margin-bottom: 6px; }
+  .note-output { background: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 4px; padding: 12px; font-size: 12px; color: #ccc; line-height: 1.7; font-family: 'SF Mono', 'Consolas', monospace; white-space: pre-wrap; }
+  .highlight { color: #fbbf24; }
+  .btn-copy { font-size: 11px; padding: 4px 10px; border-radius: 3px; border: 1px solid #333; background: #1a1a1a; color: #aaa; cursor: pointer; float: right; margin-top: -2px; }
+  .btn-primary { background: #1d4ed8; color: #fff; border: none; border-radius: 5px; padding: 8px 16px; font-size: 13px; cursor: pointer; }
+  .btn-primary:hover { background: #2563eb; }
+
+  /* Lifestyle row */
+  .lifestyle-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+  .lifestyle-item { display: flex; flex-direction: column; gap: 4px; }
+  .lifestyle-item label { font-size: 11px; color: #888; }
+  .lifestyle-item select { background: #0a0a0a; border: 1px solid #2a2a2a; border-radius: 4px; padding: 5px 8px; color: #e5e5e5; font-size: 12px; }
+
+  /* Divider */
+  .divider { height: 1px; background: #1f1f1f; margin: 12px 0; }
+
+  /* Stock tag */
+  .stock-tag { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; padding: 2px 8px; border-radius: 10px; cursor: pointer; border: 1px solid #333; }
+  .stock-tag.sufficient { background: #14532d; color: #4ade80; border-color: #166534; }
+  .stock-tag.insufficient { background: #7f1d1d; color: #fca5a5; border-color: #991b1b; }
+
+  /* Progress summary */
+  .progress-row { display: flex; gap: 8px; margin-bottom: 16px; }
+  .progress-item { background: #111; border: 1px solid #1f1f1f; border-radius: 5px; padding: 8px 12px; flex: 1; }
+  .progress-item .num { font-size: 20px; font-weight: 700; color: #fff; }
+  .progress-item .lbl { font-size: 10px; color: #666; margin-top: 2px; }
+  .progress-item.warn .num { color: #fbbf24; }
+  .progress-item.info .num { color: #93c5fd; }
+
+  .annotation { font-size: 11px; color: #666; margin-top: 16px; border-top: 1px solid #1f1f1f; padding-top: 12px; }
+</style>
+</head>
+<body>
+
+<h1>BPMH Panel — Design Mockup</h1>
+<p class="subtitle">New tab in the clinical app. Tech opens after returning from bedside with annotated printout.</p>
+
+<!-- App chrome -->
+<div class="app-chrome">
+
+  <!-- Tab bar (showing it sits alongside existing tabs) -->
+  <div class="tab-bar">
+    <div class="tab">Summary</div>
+    <div class="tab">Medications</div>
+    <div class="tab">Vitals</div>
+    <div class="tab">Kidney</div>
+    <div class="tab active">BPMH</div>
+  </div>
+
+  <div class="tab-content">
+
+    <!-- Step indicator -->
+    <div class="steps">
+      <div class="step">
+        <div class="step-dot done">✓</div>
+        <span class="step-label">Sources</span>
+        <div class="step-line"></div>
+      </div>
+      <div class="step">
+        <div class="step-dot done">✓</div>
+        <span class="step-label">Community Meds</span>
+        <div class="step-line"></div>
+      </div>
+      <div class="step">
+        <div class="step-dot active">3</div>
+        <span class="step-label active">Comparison</span>
+        <div class="step-line"></div>
+      </div>
+      <div class="step">
+        <div class="step-dot pending">4</div>
+        <span class="step-label">Task Note</span>
+      </div>
+    </div>
+
+    <!-- Summary row -->
+    <div class="progress-row">
+      <div class="progress-item">
+        <div class="num">8</div>
+        <div class="lbl">Community meds</div>
+      </div>
+      <div class="progress-item">
+        <div class="num">11</div>
+        <div class="lbl">Inpatient orders</div>
+      </div>
+      <div class="progress-item warn">
+        <div class="num">3</div>
+        <div class="lbl">Discrepancies</div>
+      </div>
+      <div class="progress-item info">
+        <div class="num">2</div>
+        <div class="lbl">Community only</div>
+      </div>
+    </div>
+
+    <!-- Step 1: Sources (collapsed, done) -->
+    <div class="section">
+      <div class="section-header">
+        <h3>Step 1 — Sources &amp; Patient Details</h3>
+        <span class="badge badge-done">Done</span>
+      </div>
+      <!-- collapsed -->
+    </div>
+
+    <!-- Step 2: Community Meds (collapsed, done) -->
+    <div class="section">
+      <div class="section-header">
+        <h3>Step 2 — Community Medications</h3>
+        <span class="badge badge-done">8 entered</span>
+      </div>
+      <!-- collapsed -->
+    </div>
+
+    <!-- Step 3: Comparison (active/expanded) -->
+    <div class="section">
+      <div class="section-header">
+        <h3>Step 3 — Comparison: Community vs Inpatient</h3>
+        <span class="badge badge-active">Active</span>
+      </div>
+      <div class="section-body">
+        <p style="font-size:12px;color:#888;margin-bottom:12px">Community meds (from your entry) compared against FHIR inpatient orders. Add notes to any discrepancy — they'll populate the Task note automatically.</p>
+
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th style="width:34%">Community (patient taking)</th>
+              <th style="width:18%">Status</th>
+              <th style="width:34%">Inpatient order</th>
+              <th style="width:14%"></th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr>
+              <td>
+                <div class="drug-name">amlodipine</div>
+                <div class="drug-detail">5 mg, oral, once daily</div>
+              </td>
+              <td><span class="status-tag status-match">✓ Match</span></td>
+              <td>
+                <div class="drug-name">amlodipine</div>
+                <div class="drug-detail">5 mg, oral, once daily</div>
+              </td>
+              <td></td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="drug-name">metformin</div>
+                <div class="drug-detail">500 mg, oral, twice daily</div>
+                <div class="drug-detail" style="color:#4ade80;font-size:10px">SCR + patient confirmed</div>
+              </td>
+              <td><span class="status-tag status-discrepancy">⚠ Discrepancy</span></td>
+              <td>
+                <div class="drug-name">metformin</div>
+                <div class="drug-detail">1 g, oral, twice daily</div>
+                <div class="discrepancy-note">Dose doubled inpatient vs home</div>
+              </td>
+              <td><button class="btn-small">+ Note</button></td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="drug-name">ramipril</div>
+                <div class="drug-detail">10 mg, oral, once daily</div>
+              </td>
+              <td><span class="status-tag status-discrepancy">⚠ Discrepancy</span></td>
+              <td>
+                <div class="drug-name">ramipril</div>
+                <div class="drug-detail">5 mg, oral, once daily</div>
+                <div class="discrepancy-note">Dose halved inpatient vs home</div>
+              </td>
+              <td><button class="btn-small">+ Note</button></td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="drug-name">insulin glargine <span class="flag flag-insulin">units</span></div>
+                <div class="drug-detail">20 units, subcutaneous, at night</div>
+              </td>
+              <td><span class="status-tag status-discrepancy">⚠ Discrepancy</span></td>
+              <td>
+                <div class="drug-name">insulin glargine</div>
+                <div class="drug-detail">18 units, subcutaneous, at night</div>
+                <div class="discrepancy-note">Units differ: 20 units home vs 18 units inpatient</div>
+              </td>
+              <td><button class="btn-small">+ Note</button></td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="drug-name">atorvastatin</div>
+                <div class="drug-detail">40 mg, oral, at night</div>
+              </td>
+              <td><span class="status-tag status-match">✓ Match</span></td>
+              <td>
+                <div class="drug-name">atorvastatin</div>
+                <div class="drug-detail">40 mg, oral, at night</div>
+              </td>
+              <td></td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="drug-name">co-careldopa <span class="flag flag-timing">timing</span></div>
+                <div class="drug-detail">25/100 mg, oral, 6 am / 12 pm / 6 pm</div>
+              </td>
+              <td><span class="status-tag status-match">✓ Match</span></td>
+              <td>
+                <div class="drug-name">co-careldopa</div>
+                <div class="drug-detail">25/100 mg, oral, TDS</div>
+                <div class="discrepancy-note info">⚠ Confirm exact times documented in BPMH</div>
+              </td>
+              <td></td>
+            </tr>
+
+            <tr style="background:#050510">
+              <td>
+                <div class="drug-name" style="color:#9ca3af">omeprazole</div>
+                <div class="drug-detail">20 mg, oral, once daily</div>
+              </td>
+              <td><span class="status-tag status-community-only">Home only</span></td>
+              <td>
+                <div style="color:#555;font-size:12px">— not ordered inpatient</div>
+              </td>
+              <td></td>
+            </tr>
+
+            <tr style="background:#050510">
+              <td>
+                <div class="drug-name" style="color:#9ca3af">aspirin</div>
+                <div class="drug-detail">75 mg, oral, once daily</div>
+              </td>
+              <td><span class="status-tag status-community-only">Home only</span></td>
+              <td>
+                <div style="color:#555;font-size:12px">— not ordered inpatient</div>
+              </td>
+              <td></td>
+            </tr>
+
+          </tbody>
+        </table>
+
+        <div class="divider"></div>
+        <div style="display:flex;justify-content:flex-end">
+          <button class="btn-primary">Continue to Task Note →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4: Task Note (pending/collapsed preview) -->
+    <div class="section">
+      <div class="section-header">
+        <h3>Step 4 — Task Note Generator</h3>
+        <span class="badge badge-pending">Next</span>
+      </div>
+      <div class="section-body">
+        <p style="font-size:12px;color:#888;margin-bottom:14px">Complete the details below. The note text is generated automatically — copy and paste directly into the PowerChart Task form.</p>
+
+        <!-- Stock adequacy -->
+        <div style="margin-bottom:14px">
+          <div class="note-label">Stock at home (will patient have ≥2 weeks supply after discharge?)</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <span class="stock-tag sufficient">✓ Adequate (&gt;2 weeks)</span>
+            <span class="stock-tag" style="background:#1f1f1f;color:#888">× Inadequate</span>
+            <span class="stock-tag" style="background:#1f1f1f;color:#888">? Unable to assess</span>
+          </div>
+        </div>
+
+        <!-- Lifestyle -->
+        <div class="lifestyle-row">
+          <div class="lifestyle-item">
+            <label>Alcohol</label>
+            <select><option>None</option><option>Occasional</option><option>Regular</option></select>
+          </div>
+          <div class="lifestyle-item">
+            <label>Tobacco</label>
+            <select><option>Non-smoker</option><option>Ex-smoker</option><option>Current smoker</option></select>
+          </div>
+        </div>
+        <div class="field" style="margin-bottom:14px">
+          <label>OTC / herbal / supplements patient takes</label>
+          <input type="text" placeholder="e.g. multivitamins, ibuprofen PRN" />
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Generated note Part 1 -->
+        <div class="note-section">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <div class="note-label">Part 1 — Observation note (copy into PowerChart Task, first section)</div>
+            <button class="btn-copy">Copy</button>
+          </div>
+          <div class="note-output">BPMH completed. Sources: SCR + patient confirmed. Consent obtained. Community pharmacy: Boots, 12 High St.
+
+Stock: Patient has adequate supply (&gt;2 weeks) at home. Only new/amended medications will need supplying on discharge.
+
+<span class="highlight">Discrepancies noted:</span>
+• Metformin: patient takes 500 mg BD at home — inpatient order is 1 g BD (dose doubled)
+• Ramipril: patient takes 10 mg OD at home — inpatient order is 5 mg OD (dose halved)
+• Insulin glargine: patient takes 20 units nocte at home — inpatient order is 18 units nocte
+
+Home medications not currently ordered inpatient:
+• Omeprazole 20 mg OD
+• Aspirin 75 mg OD</div>
+        </div>
+
+        <!-- Generated note Part 2 -->
+        <div class="note-section">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <div class="note-label">Part 2 — OTC / lifestyle (copy into PowerChart Task, second section)</div>
+            <button class="btn-copy">Copy</button>
+          </div>
+          <div class="note-output">OTC/supplements: None reported.
+Alcohol: None.
+Tobacco: Non-smoker.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="annotation">
+      Notes: Drug name auto-complete will match against inpatient FHIR medication names to improve comparison accuracy. Special flags (insulin → units, Parkinson's meds → timing) trigger automatically based on drug class. All data persists in browser storage per patient encounter and is cleared on new encounter.
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

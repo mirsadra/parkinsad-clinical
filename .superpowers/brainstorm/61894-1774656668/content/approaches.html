@@ -1,0 +1,42 @@
+<h2>How should the BPMH panel work?</h2>
+<p class="subtitle">Three approaches — different entry points into the workflow</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Full Workflow Replacement</h3>
+      <p>Tech enters community meds from SystmOne/HIE into the app before going bedside. App compares against inpatient FHIR meds, highlights discrepancies, and produces a single combined printout. After bedside, tech marks confirmations and stock status. App generates the Task note text ready to paste into PowerChart.</p>
+      <div class="pros-cons" style="margin-top:10px">
+        <div class="pros"><h4>Pros</h4><ul><li>Replaces two printouts with one structured sheet</li><li>Discrepancies caught before bedside</li><li>Task note fully auto-generated</li><li>Data captured once, used everywhere</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Requires data entry before going bedside</li><li>Biggest behaviour change for technicians</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Post-Bedside Task Note Generator</h3>
+      <p>Don't touch the pre-work. Tech still prints from SystmOne/HIE as today. After bedside, they open the app and fill a structured form: sources consulted, discrepancies found, stock adequacy, pharmacy, OTC/alcohol/tobacco. App generates the PowerChart Task note text and a BPMH entry order list.</p>
+      <div class="pros-cons" style="margin-top:10px">
+        <div class="pros"><h4>Pros</h4><ul><li>Minimal change to existing workflow</li><li>Immediate value — eliminates note-writing time</li><li>Easy to adopt</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Discrepancy spotting still manual</li><li>Doesn't fix the pre-work problem</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Pre-work Comparison Tool (Start Here)</h3>
+      <p>Focus only on solving A first. Tech enters community meds into app (from SystmOne/HIE on another screen). App auto-compares with inpatient FHIR meds and highlights discrepancies. Produces a single annotatable printout. Task note generation comes in a future step.</p>
+      <div class="pros-cons" style="margin-top:10px">
+        <div class="pros"><h4>Pros</h4><ul><li>Solves the highest-risk problem (discrepancy spotting) first</li><li>Smaller, shippable piece</li><li>Natural foundation for A</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Task note still manual</li><li>Doesn't feel complete on its own</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:20px">My recommendation is <strong>A</strong> — it's more work upfront but the pre-work entry feeds everything else. The discrepancy comparison and Task note generation are both impossible without that data in the app. B gives quick wins but leaves the hardest problem (A) unsolved. C is the right first chunk of A if A feels too big to ship at once.</p>
